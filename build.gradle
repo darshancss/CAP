@@ -1,0 +1,63 @@
+buildscript {
+	repositories {
+    maven {
+      url "https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-external-virtual"
+      credentials {
+        username = "U818855"
+        password = "AP4C6UixuZtjXj72CFvcD8EJJ3B"
+      }
+    }
+
+    maven {
+				url "https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-virtual"
+				credentials {
+					username = "U818855"
+					password = "AP4C6UixuZtjXj72CFvcD8EJJ3B"
+				}
+			}
+  }
+	dependencies {
+      classpath "com.github.node-gradle:gradle-node-plugin:latest.release"
+			classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
+    }
+
+}
+
+apply plugin: "com.jfrog.artifactory"
+apply plugin: "com.github.node-gradle.node"
+
+repositories {
+		maven {
+				url "https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-external-virtual"
+				credentials {
+					username = "U818855"
+					password = "AP4C6UixuZtjXj72CFvcD8EJJ3B"
+				}
+			}
+
+		maven {
+				url "https://artifactory-intg-b2.wellsfargo.net/artifactory/maven-wf-virtual"
+				credentials {
+					username = "U818855"
+					password = "AP4C6UixuZtjXj72CFvcD8EJJ3B"
+				}
+			}
+	}
+
+node{
+  download = false
+  version = "10.15.3"
+  //npmVersion = "6.9.11"
+  distBaseUrl = "https://artifactory-intg-b2.wellsfargo.net/artifactory/api/npm/npm-external-virtual/"
+
+}
+
+task bundle(type: NpmTask, dependsOn: npm_install) {
+  args = ['run', 'build']
+}
+
+task jestTest(type: NpmTask) {
+  environment = ['CI': 'true']
+  args = ['run', 'test']
+
+}
